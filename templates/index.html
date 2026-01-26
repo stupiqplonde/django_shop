@@ -1,10 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}{% endblock %}</title>
-</head>
-<body>
-    <p>{% block content %}{% endblock %}</p>
-</body>
-</html>
+{% extends "base.html" %}
+
+<title>{% block title %}{{ title }}{% endblock %}</title>
+
+<h1>{% block content %}
+
+    {% if user.is_authenticated %}
+        {% for category in categories %}
+            <div class="col-md-6">
+                 <p><b>{{ category.name }}</b></p>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if user.is_staff %}
+        <a href="{% /admin/ %}">Админ</a>
+    {% endif %}
+
+    {% endblock %}</h1>
+
