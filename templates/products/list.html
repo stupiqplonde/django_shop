@@ -1,62 +1,83 @@
-{% extends "base.html" %}
 
-{% block title %}
-    {% if category %}{{ category.name }}{% else %}Все товары{% endif %}
-{% endblock %}
 
 {% block content %}
-    <h1>{% if category %}{{ category.name }}{% else %}Все товары{% endif %}</h1>
+<div class="apple-section">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="display-5 fw-bold">
+                {% if category %}{{ category.name }}{% else %}Все товары{% endif %}
+            </h1>
+            <p class="text-muted">
+                {% if category %}
+                    Коллекция продуктов в категории {{ category.name }}
+                {% else %}
+                    Откройте для себя нашу полную коллекцию
+                {% endif %}
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="apple-btn-outline btn btn-sm">Сортировка</button>
+            <button class="apple-btn-outline btn btn-sm">Фильтры</button>
+        </div>
+    </div>
 
-    {% for category in categories %}
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'product_list_by_category' category.slug %}">
-                {{ category.name }}
-            </a>
-            </li>
-    {% endfor %}
-
-    <div class="row">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for product in products %}
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-
-                <a href="{% url 'product_detail' product.id product.slug %}">
-                    {% if product.image %}
-                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
-                    {% else %}
-                        <img src="/static/images/no-image.png" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
-                    {% endif %}
+        <div class="col">
+            <div class="apple-card h-100 d-flex flex-column">
+                <a href="{% url 'product_detail' product.id product.slug %}" class="text-decoration-none">
+                    <div style="height: 200px; overflow: hidden; border-radius: 16px 16px 0 0;">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}"
+                                 class="img-fluid w-100"
+                                 alt="{{ product.name }}"
+                                 style="height: 100%; object-fit: cover; transition: transform 0.3s ease;">
+                        {% else %}
+                            <div class="d-flex align-items-center justify-content-center w-100 h-100"
+                                 style="background: linear-gradient(135deg, #f5f5f7 0%, #e8e8ed 100%);">
+                                <div class="text-center">
+                                    <div class="display-4 mb-2">📱</div>
+                                    <p class="text-muted">Нет изображения</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
                 </a>
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">{{ product.name }}</h5>
-                    <p class="card-text">{{ product.description|truncatewords:20 }}</p>
-                    <div class="mt-auto">
-                        <p class="fw-bold">{{ product.price }} руб.</p>
-                        <!-- ИЗМЕНИЛИ: убрали products: -->
-                        <a href="{% url 'product_detail' product.id product.slug %}" class="btn btn-primary">Подробнее</a>
+
+                <div class="p-4 d-flex flex-column flex-grow-1">
+                    <div class="mb-2">
+                        <span class="badge-apple">{{ product.category.name }}</span>
+                    </div>
+
+                    <h5 class="fw-bold mb-2">
+                        <a href="{% url 'product_detail' product.id product.slug %}" class="text-dark text-decoration-none">
+                            {{ product.name }}
+                        </a>
+                    </h5>
+
+                    <p class="text-muted mb-3 flex-grow-1">{{ product.description|truncatewords:15 }}</p>
+
+                    <div class="d-flex justify-content-between align-items-center mt-auto">
+                        <div>
+                            <p class="h5 fw-bold text-primary mb-0">{{ product.price }} ₽</p>
+                        </div>
+                        <a href="{% url 'product_detail' product.id product.slug %}" class="apple-btn btn btn-sm">
+                            Подробнее
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
         {% empty %}
         <div class="col-12">
-            <p>Товары не найдены.</p>
+            <div class="apple-card p-5 text-center">
+                <div class="display-1 mb-4">🔍</div>
+                <h3 class="fw-bold mb-3">Товары не найдены</h3>
+                <p class="text-muted mb-4">Попробуйте изменить параметры поиска или выбрать другую категорию</p>
+                <a href="{% url 'product_list' %}" class="apple-btn btn">Смотреть все товары</a>
+            </div>
         </div>
         {% endfor %}
-
-        <ul class="navbar-nav me-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'login' %}">Все товары</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'register' %}">Register</a>
-            </li>
-        </ul>
-
-        {% if user.is_staff %}
-            <a href="/admin/"><button>Админ</button></a>
-        {% endif %}
-
-
     </div>
+</div>
 {% endblock %}
